@@ -32,6 +32,10 @@ if(isset($_POST['button']))
 							}
 						Redirect('/lk');
 					}
+				else
+					{
+						$error[] = 'Неверное имя пользователя или пароль';
+					}
 			}
 		else
 			{
