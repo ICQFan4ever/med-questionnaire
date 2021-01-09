@@ -134,6 +134,7 @@ function getHeader()
 function getFooter()
 	{
 		?>
+
 </div>
 </main>
 
@@ -150,4 +151,68 @@ function getFooter()
 </body>
 </html>
 	<?php
+	}
+
+function Redirect($loc = '/')
+	{
+		header('Location: '.$loc);
+		die;
+	}
+
+if(isset($_COOKIE['session']))
+	{
+		if(preg_match('#^([a-fA-F0-9]{32})$#iu', $_COOKIE['session']))
+			{
+				$db['search'] = $_COOKIE['session'];
+				$q = mysql_query("SELECT * FROM `doctors` WHERE `session` = '".$db['search']."'");
+				
+				if(mysql_num_rows($q) == 1)
+					{
+						$aut = true;
+						$_INFO = mysql_fetch_assoc($q);
+						define('LEVEL', $_INFO['level']);
+					}
+				else
+					{
+						$aut = false;
+					}
+			}
+		else
+			{
+				$aut = false;
+			}
+	}
+else
+	{
+		$aut = false;
+	}
+
+define('AUT', $aut);
+
+function is_aut()
+	{
+		return AUT;
+	}
+
+function autOnly()
+	{
+		if(!is_aut())
+			{
+				Redirect('/?autOnly');
+			}
+	}
+
+function checkAccess($req = 1)
+	{
+		if(!is_aut())
+			{
+				Redirect('/?noAutForAccessCheck');
+			}
+		else
+			{
+				if(LEVEL < $req)
+					{
+						Redirect('/?noAccess');
+					}
+			}
 	}
