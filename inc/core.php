@@ -127,7 +127,7 @@ function getHeader()
 		<!-- Begin page content -->
 		<main class="flex-shrink-0">
 		<div class="container">
-			<h1 class="mt-5"><?=$_PAGE['title']?></h1>
+			<br /><h1 class="mt-5"><?=$_PAGE['title']?></h1>
 	<?php
 	}
 
@@ -196,7 +196,7 @@ function isAut()
 
 function autOnly()
 	{
-		if(!is_aut())
+		if(!isAut())
 			{
 				Redirect('/?autOnly');
 			}
@@ -204,7 +204,7 @@ function autOnly()
 
 function checkAccess($req = 1)
 	{
-		if(!is_aut())
+		if(!isAut())
 			{
 				Redirect('/?noAutForAccessCheck');
 			}
