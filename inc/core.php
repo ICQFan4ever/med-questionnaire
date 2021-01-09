@@ -189,7 +189,7 @@ else
 
 define('AUT', $aut);
 
-function is_aut()
+function isAut()
 	{
 		return AUT;
 	}
