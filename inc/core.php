@@ -216,3 +216,34 @@ function checkAccess($req = 1)
 					}
 			}
 	}
+
+function showError($text = '')
+	{
+		return '<div class="alert alert-danger" role="alert">'.$text.'</div>';
+	}
+
+function showFormError($array)
+	{
+		if(empty($array))
+			{
+				echo '';
+			}
+		else
+			{
+				echo showError(implode('<br />', $array));
+			}
+	}
+
+function fatalError($text = 'Ошибка')
+	{
+		setTitle('Ошибка');
+		getHeader();
+		echo showError($text);
+		getFooter();
+		exit;
+	}
+
+function dbFilter($string, $length)
+	{
+		return mb_substr(htmlspecialchars(mysql_real_escape_string($string)), 0, $length, 'utf-8');
+	}
