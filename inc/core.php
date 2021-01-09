@@ -119,12 +119,6 @@ function getHeader()
 								<a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
 							</li>
 						</ul>
-						<?php
-							}
-						
-						if(isAut())
-							{
-								?>
 						<ul class="navbar-nav ml-auto">
 							<li class="nav-item dropdown">
 								<a class="nav-link dropdown-toggle" href="#" id="dropdown01" data-bs-toggle="dropdown" aria-expanded="false">Выход</a>
@@ -139,12 +133,15 @@ function getHeader()
 						else
 							{
 								?>
-								<li class="nav-item">
-									<a class="nav-link" href="/login">Вход</a>
-								</li>
+								<ul class="navbar-nav ml-auto">
+									<li class="nav-item">
+										<a class="nav-link" href="/login">Вход</a>
+									</li>
+								</ul>
 								<?php
 							}
 						?>
+						
 					</div>
 				</div>
 			</nav>
@@ -238,7 +235,7 @@ function checkAccess($req = 1)
 			{
 				if(LEVEL < $req)
 					{
-						Redirect('/?noAccess');
+						fatalError('У вас нет прав для просмотра этой страницы');
 					}
 			}
 	}
