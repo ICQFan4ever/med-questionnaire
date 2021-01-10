@@ -36,6 +36,8 @@ CREATE TABLE `questions`
 	(
 		`id` INT AUTO_INCREMENT PRIMARY KEY,
 		`text` MEDIUMTEXT,
+		`positive` tinytext,
+		`negative` tinytext,
 		`alert` TINYINT
 	)
 Engine=Aria
