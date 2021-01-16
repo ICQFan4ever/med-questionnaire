@@ -38,7 +38,8 @@ CREATE TABLE `questions`
 		`text` MEDIUMTEXT,
 		`positive` tinytext,
 		`negative` tinytext,
-		`alert` TINYINT
+		`alert` TINYINT,
+		`draft` TINYINT
 	)
 Engine=Aria
 DEFAULT CHARSET=utf8mb4;
