@@ -82,6 +82,7 @@ if(isset($_GET['mode']))
 				$q = mysql_query("SELECT * FROM `areas` WHERE `id` = ".$id);
 				if(mysql_num_rows($q) == 1)
 					{
+						$_area = mysql_fetch_assoc($q);
 						if($_GET['mode'] == 'edit')
 							{
 								$area = mysql_fetch_assoc($q);
@@ -122,10 +123,10 @@ if(isset($_GET['mode']))
 								?>
 								
 								<div class="row">
-									<form action="/areas/edit/<?=$area['id']?>" method="post">
+									<form action="/areas/edit/<?=$_area['id']?>" method="post">
 
 										<div class="col-sm-6" style="margin-bottom: 5px;">
-											<input type="text" class="form-control" name="title" placeholder="Название участка" value="<?=$area['title']?>" />
+											<input type="text" class="form-control" name="title" placeholder="Название участка" value="<?=$_area['title']?>" />
 										</div>
 
 										<div class="col-sm-6">
@@ -165,11 +166,67 @@ if(isset($_GET['mode']))
 									}
 							}
 							
-							if($_GET['action'] == 'doctors')
-								{
-									//
-								}
-				
+						if($_GET['mode'] == 'doctors')
+							{
+								setTitle('Мед. работники на участке "'.$_area['title'].'"');
+								getHeader();
+								
+								$q = mysql_query("SELECT * FROM `doctors` WHERE `id_area` = ".$id." ORDER BY `level` DESC, `id` ASC");
+								if(mysql_num_rows($q) < 1)
+									{
+										showError('На данном участке никого нет');
+									}
+								else
+									{
+										$cc = 0;
+										while($doctor = mysql_fetch_assoc($q))
+											{
+												$cc++;
+												?>
+												<div class="col-6">
+													<?=$cc?>) <a href="/doctors/view/<?=$doctor['id']?>"><?=$doctor['name']?></a><br />
+													Роль: <?=$doctor['level'] == 3 ? 'Старший участка' : 'Мед. работник'?><br />
+													Телефон: <?=$doctor['phone']?>
+													<hr />
+												</div>
+												<?php
+											}
+									}
+								getFooter();
+								exit;
+							}
+						
+						if($_GET['mode'] == 'patients')
+							{
+								setTitle('Пациенты участка "'.$_area['title'].'"');
+								getHeader();
+								
+								$q = mysql_query("SELECT * FROM `patients` WHERE `id_area` = ".$id." ORDER BY `name` ASC");
+								if(mysql_num_rows($q) < 1)
+									{
+										showError('На данном участке отсутствуют пациенты');
+									}
+								else
+									{
+										$cc = 0;
+										while($patient = mysql_fetch_assoc($q))
+											{
+												$cc++;
+												?>
+												<div class="col-6">
+													<?=$cc?>) <a href="/patients/view/<?=$doctor['id']?>"><?=$patient['name']?></a><br />
+													Телефон: <?=$patient['phone']?><br />
+													
+													<!--MORE INFO?-->
+													
+													<hr />
+												</div>
+												<?php
+											}
+									}
+								getFooter();
+								exit;
+							}
 					}
 				else
 					{
@@ -225,7 +282,7 @@ if(mysql_num_rows($q_deleted) > 0)
 				<div class="col">
 					<b><?=$area['title']?></b><br />
 					Мед. работников: <a href="/areas/doctors/<?=$area['id']?>" class="btn btn-xs btn-primary"><?=$c_doctors?></a><br />
-					Пациентов: <a href="/areas/doctors/<?=$area['id']?>" class="btn btn-xs btn-primary"><?=$c_patients?></a><br />
+					Пациентов: <a href="/areas/patients/<?=$area['id']?>" class="btn btn-xs btn-primary"><?=$c_patients?></a><br />
 					<a href="/areas/edit/<?=$area['id']?>" class="btn btn-xs btn-success">Изменить</a> 
 					<a href="/areas/restore/<?=$area['id']?>" class="btn btn-xs btn-primary">Восстановить</a> 
 				</div>

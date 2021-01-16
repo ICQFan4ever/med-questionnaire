@@ -1,7 +1,8 @@
 CREATE TABLE `areas`
 	(
 		`id` INT AUTO_INCREMENT PRIMARY KEY,
-		`title` TINYTEXT
+		`title` TINYTEXT,
+		`deleted` TINYINT
 	)
 Engine=Aria
 DEFAULT CHARSET=utf8mb4;
@@ -16,7 +17,8 @@ CREATE TABLE `doctors`
 		`session` TINYTEXT,
 		`name` TINYTEXT,
 		`phone` TINYTEXT,
-		`tg_id` BIGINT
+		`tg_id` BIGINT,
+		`last_seen` INT
 	)
 Engine=Aria
 DEFAULT CHARSET=utf8mb4;
