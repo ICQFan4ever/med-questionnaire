@@ -18,7 +18,8 @@ CREATE TABLE `doctors`
 		`name` TINYTEXT,
 		`phone` TINYTEXT,
 		`tg_id` BIGINT,
-		`last_seen` INT
+		`last_seen` INT,
+		`deleted` TINYINT
 	)
 Engine=Aria
 DEFAULT CHARSET=utf8mb4;
@@ -29,7 +30,8 @@ CREATE TABLE `patients`
 		`id_area` INT,
 		`name` TINYTEXT,
 		`sid` TINYTEXT,
-		`phone` TINYTEXT
+		`phone` TINYTEXT,
+		`deleted` TINYINT
 	)
 Engine=Aria
 DEFAULT CHARSET=utf8mb4;

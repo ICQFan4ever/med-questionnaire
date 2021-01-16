@@ -251,8 +251,8 @@ else
 	{
 		while($area = mysql_fetch_assoc($q))
 			{
-				$c_doctors = mysql_num_rows(mysql_query("SELECT * FROM `doctors` WHERE `id_area` = ".$area['id']));
-				$c_patients = mysql_num_rows(mysql_query("SELECT * FROM `patients` WHERE `id_area` = ".$area['id']));
+				$c_doctors = mysql_num_rows(mysql_query("SELECT * FROM `doctors` WHERE `deleted` = 0 AND `id_area` = ".$area['id']));
+				$c_patients = mysql_num_rows(mysql_query("SELECT * FROM `patients` WHERE `deleted` = 0 AND `id_area` = ".$area['id']));
 				?>
 				
 				<div class="col">
@@ -275,8 +275,8 @@ if(mysql_num_rows($q_deleted) > 0)
 		
 		while($area = mysql_fetch_assoc($q_deleted))
 			{
-				$c_doctors = mysql_num_rows(mysql_query("SELECT * FROM `doctors` WHERE `id_area` = ".$area['id']));
-				$c_patients = mysql_num_rows(mysql_query("SELECT * FROM `patients` WHERE `id_area` = ".$area['id']));
+				$c_doctors = mysql_num_rows(mysql_query("SELECT * FROM `doctors` WHERE `deleted` = 0 AND `id_area` = ".$area['id']));
+				$c_patients = mysql_num_rows(mysql_query("SELECT * FROM `patients` WHERE `deleted` = 0 AND `id_area` = ".$area['id']));
 				?>
 				
 				<div class="col">

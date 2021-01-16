@@ -15,7 +15,7 @@ if(isset($_POST['button']))
 				$query['login'] = dbFilter($_POST['login'], 30);
 				$query['password'] = md5(md5($_POST['password']));
 				
-				$q = mysql_query("SELECT * FROM `doctors` WHERE `login` = '".$query['login']."' AND `password` = '".$query['password']."'");
+				$q = mysql_query("SELECT * FROM `doctors` WHERE `login` = '".$query['login']."' AND `password` = '".$query['password']."' AND `deleted` = 0");
 				if(mysql_num_rows($q) == 1)
 					{
 						$_INFO = mysql_fetch_assoc($q);

@@ -245,6 +245,11 @@ function showError($text = '')
 		echo '<br /><div class="alert alert-danger" role="alert">'.$text.'</div><br />';
 	}
 
+function showSuccess($text = '')
+	{
+		echo '<br /><div class="alert alert-success" role="alert">'.$text.'</div><br />';
+	}
+
 function showFormError($array)
 	{
 		if(empty($array))
