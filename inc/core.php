@@ -87,6 +87,12 @@ function getHeader()
 				font-size: 3.5rem;
 				}
 			}
+			.btn-group-xs > .btn, .btn-xs {
+				padding: .40rem .4rem;
+				font-size: .7rem;
+				line-height: .5;
+				border-radius: .2rem;
+			}
 		</style>
 
 
@@ -242,7 +248,7 @@ function checkAccess($req = 1)
 
 function showError($text = '')
 	{
-		return '<div class="alert alert-danger" role="alert">'.$text.'</div>';
+		echo '<br /><div class="alert alert-danger" role="alert">'.$text.'</div><br />';
 	}
 
 function showFormError($array)

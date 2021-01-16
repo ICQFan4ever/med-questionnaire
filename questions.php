@@ -21,10 +21,10 @@ if(isset($_GET['mode']))
 				$error = array();
 				if(isset($_POST['button']))
 					{
-						# question, positive, negative, alert
-						if(isset($_POST['question']))
+						# text, positive, negative, alert
+						if(isset($_POST['text']))
 							{
-								$db['question'] = filterText($_POST['question'], 1000);
+								$db['text'] = dbFilter($_POST['text'], 1000);
 							}
 						else
 							{
@@ -33,7 +33,7 @@ if(isset($_GET['mode']))
 						
 						if(isset($_POST['positive']))
 							{
-								$db['positive'] = filterText($_POST['positive'], 100);
+								$db['positive'] = dbFilter($_POST['positive'], 100);
 							}
 						else
 							{
@@ -42,7 +42,7 @@ if(isset($_GET['mode']))
 						
 						if(isset($_POST['negative']))
 							{
-								$db['negative'] = filterText($_POST['negative'], 100);
+								$db['negative'] = dbFilter($_POST['negative'], 100);
 							}
 						else
 							{
@@ -69,7 +69,7 @@ if(isset($_GET['mode']))
 						
 						if(empty($error))
 							{
-								if(mysql_query("INSERT INTO `questions`(`question`, `positive`, `negative`, `alert`, `draft`) VALUES ('".$db['question']."', '".$db['positive']."', '".$db['negative']."', ".$db['alert'].", ".$db['draft'].")"))
+								if(mysql_query("INSERT INTO `questions`(`text`, `positive`, `negative`, `alert`, `draft`) VALUES ('".$db['text']."', '".$db['positive']."', '".$db['negative']."', ".$db['alert'].", ".$db['draft'].")"))
 									{
 										Redirect('/questions');
 									}
@@ -86,10 +86,10 @@ if(isset($_GET['mode']))
 				?>
 				
 				<div class="row">
-					<form action="/login" method="post">
+					<form action="/questions/add" method="post">
 
 						<div class="col-sm-6" style="margin-bottom: 5px;">
-							<textarea class="form-control" name="question" placeholder="Текст вопроса" required="required"></textarea>
+							<textarea class="form-control" name="text" placeholder="Текст вопроса" required="required"></textarea>
 						</div>
 
 						<div class="col-sm-6" style="margin-bottom: 5px;">
@@ -111,7 +111,7 @@ if(isset($_GET['mode']))
 						</div>
 						
 						<div class="col-sm-3">
-							<input type="submit" name="button" value="Вход" class="btn btn-primary" />
+							<input type="submit" name="button" value="Создать" class="btn btn-primary" />
 						</div>
 					</form>
 				</div>
@@ -126,10 +126,10 @@ if(isset($_GET['mode']))
 				if(isset($_GET['id']))
 					{
 						$id = (int)$_GET['id'];
-						$q = mysql_query("SELECT * FROM `question` WHERE `id` = ".$id);
+						$q = mysql_query("SELECT * FROM `questions` WHERE `id` = ".$id);
 						if(mysql_num_rows($q) == 1)
 							{
-								if(mysql_query("UPDATE `question` SET `draft` = 1 WHERE `id` = ".$id))
+								if(mysql_query("UPDATE `questions` SET `draft` = 1 WHERE `id` = ".$id))
 									{
 										Redirect('/questions');
 									}
@@ -140,12 +140,12 @@ if(isset($_GET['mode']))
 							}
 						else
 							{
-								fatalError('Вопрос не найден');
+								fatalError('Вопрос не найден (143)');
 							}
 					}
 				else
 					{
-						fatalError('Вопрос не найден');
+						fatalError('Вопрос не найден (148)');
 					}
 			}
 		
@@ -158,10 +158,10 @@ if(isset($_GET['mode']))
 								if(isset($_GET['id']))
 									{
 										$id = (int)$_GET['id'];
-										$q = mysql_query("SELECT * FROM `question` WHERE `id` = ".$id);
+										$q = mysql_query("SELECT * FROM `questions` WHERE `id` = ".$id);
 										if(mysql_num_rows($q) == 1)
 											{
-												if(mysql_query("UPDATE `question` SET `draft` = 0 WHERE `id` = ".$id))
+												if(mysql_query("UPDATE `questions` SET `draft` = 0 WHERE `id` = ".$id))
 													{
 														Redirect('/questions');
 													}
@@ -172,12 +172,12 @@ if(isset($_GET['mode']))
 											}
 										else
 											{
-												fatalError('Вопрос не найден');
+												fatalError('Вопрос не найден (175)');
 											}
 									}
 								else
 									{
-										fatalError('Вопрос не найден');
+										fatalError('Вопрос не найден (180)');
 									}
 							}
 						Redirect('/questions/drafts');
@@ -199,18 +199,18 @@ if(isset($_GET['mode']))
 								$cc++;
 								?>
 								<div class="col">
-									<?=$cc?>)<br />
-									<?=$question['question']?><br />
+									<?=$cc?>) 
+									<?=$question['text']?><br />
 									<b>Положительный ответ:</b> <?=$question['positive']?><br />
 									<b>Отрицательный ответ:</b> <?=$question['negative']?><br />
 									<b>Алерт на ответ:</b> <?=$question['alert'] == 1 ? $question['positive'] : $question['negative']?><br />
-									<a href="/questions/drafts/undraft/<?=$question['id']?>" class="badge bg-primary">Опубликовать</a>
+									<a href="/questions/drafts/undraft/<?=$question['id']?>" class="btn btn-primary btn-xs">Опубликовать</a>
 								</div>
 								<br />
 								<?php
 							}
 					}
-				echo '<a href="/questions">Назад к списку вопросов</a>';
+				echo '<a href="/questions" class=">Назад к списку вопросов</a>';
 				
 				getFooter();
 				exit;
@@ -222,7 +222,7 @@ setTitle('Вопросы');
 getHeader();
 $q = mysql_query("SELECT * FROM `questions` WHERE `draft` = 0 ORDER BY `id` ASC");
 $c = mysql_num_rows($q);
-echo '<a href="/questions/add" class="btn btn-primary">Добавить вопрос</a>';
+echo '<a href="/questions/add" class="btn btn-primary">Добавить вопрос</a><br />';
 
 if($c < 1)
 	{
@@ -236,16 +236,16 @@ else
 				$cc++;
 				?>
 				<div class="col">
-					<?=$cc?>)<br />
-					<?=$question['question']?><br />
+					<?=$cc?>) 
+					<?=$question['text']?><br />
 					<b>Положительный ответ:</b> <?=$question['positive']?><br />
 					<b>Отрицательный ответ:</b> <?=$question['negative']?><br />
 					<b>Алерт на ответ:</b> <?=$question['alert'] == 1 ? $question['positive'] : $question['negative']?><br />
-					<a href="/questions/draft/<?=$question['id']?>" class="badge bg-secondary">В черновики</a>
+					<a href="/questions/draft/<?=$question['id']?>" class="btn btn-secondary btn-xs">В черновики</a>
 				</div>
 				<br />
 				<?php
 			}
-		echo '<a href="/questions/drafts" class="btn btn-secondary">Неактивные вопросы</a>';
 	}
+echo '<a href="/questions/drafts" class="btn btn-secondary">Неактивные вопросы</a>';
 getFooter();
