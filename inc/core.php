@@ -105,7 +105,7 @@ function getHeader()
 			<!-- Fixed navbar -->
 			<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
 				<div class="container">
-					<a class="navbar-brand" href="#">Title</a>
+					<a class="navbar-brand" href="/">KZ</a>
 					<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
 					<span class="navbar-toggler-icon"></span>
 					</button>
@@ -115,14 +115,8 @@ function getHeader()
 							{
 								?>
 						<ul class="navbar-nav me-auto mb-2 mb-md-0">
-							<li class="nav-item active">
-								<a class="nav-link" aria-current="page" href="#">Home</a>
-							</li>
 							<li class="nav-item">
-								<a class="nav-link" href="#">Link</a>
-							</li>
-							<li class="nav-item">
-								<a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
+								<a class="nav-link" href="/lk">Личный кабинет</a>
 							</li>
 						</ul>
 						<ul class="navbar-nav ml-auto">
