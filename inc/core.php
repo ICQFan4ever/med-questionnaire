@@ -270,3 +270,16 @@ function dbFilter($string, $length)
 	{
 		return mb_substr(htmlspecialchars(mysql_real_escape_string($string)), 0, $length, 'utf-8');
 	}
+
+function passGen($length = 8)
+	{
+		$chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMOPQRSTUVWXYZ0123456789';
+		$len = mb_strlen($chars, 'utf-8');
+		$return = '';
+		for($i = 1; $i <= $len; $i++)
+			{
+				$return .= $chars[mt_rand(0, $len - 1)];
+			}
+		
+		return $return;
+	}
