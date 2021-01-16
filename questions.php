@@ -140,12 +140,12 @@ if(isset($_GET['mode']))
 							}
 						else
 							{
-								fatalError('Вопрос не найден (143)');
+								fatalError('Вопрос не найден (wrong id)');
 							}
 					}
 				else
 					{
-						fatalError('Вопрос не найден (148)');
+						fatalError('Вопрос не найден (empty id)');
 					}
 			}
 		
@@ -172,12 +172,12 @@ if(isset($_GET['mode']))
 											}
 										else
 											{
-												fatalError('Вопрос не найден (175)');
+												fatalError('Вопрос не найден (wrong id)');
 											}
 									}
 								else
 									{
-										fatalError('Вопрос не найден (180)');
+										fatalError('Вопрос не найден (empty id)');
 									}
 							}
 						Redirect('/questions/drafts');
