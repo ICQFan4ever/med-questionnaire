@@ -39,7 +39,7 @@ if(isset($_GET['mode']))
 						
 						if(empty($error))
 							{
-								if(mysql_query("INSERT INTO `areas`(`title`) VALUES ('".$db['title']."')"))
+								if(mysql_query("INSERT INTO `areas`(`title`, `deleted`) VALUES ('".$db['title']."', 0)"))
 									{
 										Redirect('/areas');
 									}
@@ -76,13 +76,13 @@ if(isset($_GET['mode']))
 				exit;
 			}
 		
-		if($_GET['mode'] == 'edit')
+		if(isset($_GET['id']))
 			{
-				if(isset($_GET['id']))
+				$id = (int)$_GET['id'];
+				$q = mysql_query("SELECT * FROM `areas` WHERE `id` = ".$id);
+				if(mysql_num_rows($q) == 1)
 					{
-						$id = (int)$_GET['id'];
-						$q = mysql_query("SELECT * FROM `areas` WHERE `id` = ".$id);
-						if(mysql_num_rows($q) == 1)
+						if($_GET['mode'] == 'edit')
 							{
 								$area = mysql_fetch_assoc($q);
 								
@@ -92,7 +92,7 @@ if(isset($_GET['mode']))
 										if(isset($_POST['title']))
 											{
 												$db['title'] = dbFilter($_POST['title'], 200);
-												$q_check = mysql_query("SELECT * FROM `areas` WHERE `title` = '".$db['title']."' AND `id` != ".$area['id']);\
+												$q_check = mysql_query("SELECT * FROM `areas` WHERE `title` = '".$db['title']."' AND `id` != ".$area['id']);
 												if(mysql_num_rows($q_check) > 0)
 													{
 														$error[] = 'Такой участок уже есть';
@@ -139,25 +139,8 @@ if(isset($_GET['mode']))
 								getFooter();
 								exit;
 							}
-						else
-							{
-								fatalError('Участок не найден (wrong id)');
-							}
-					}
-				else
-					{
-						fatalError('Участок не найден (empty id)');
-					}
-			}
-		
-		
-		if($_GET['mode'] == 'remove')
-			{
-				if(isset($_GET['id']))
-					{
-						$id = (int)$_GET['id'];
-						$q = mysql_query("SELECT * FROM `areas` WHERE `id` = ".$id);
-						if(mysql_num_rows($q) == 1)
+				
+						if($_GET['mode'] == 'remove')
 							{
 								if(mysql_query("UPDATE `areas` SET `deleted` = 1 WHERE `id` = ".$id))
 									{
@@ -168,24 +151,9 @@ if(isset($_GET['mode']))
 										fatalError(mysql_error());
 									}
 							}
-						else
-							{
-								fatalError('Участок не найден (wrong id)');
-							}
-					}
-				else
-					{
-						fatalError('Участок не найден (empty id)');
-					}
-			}
-		
-		if($_GET['mode'] == 'restore')
-			{
-				if(isset($_GET['id']))
-					{
-						$id = (int)$_GET['id'];
-						$q = mysql_query("SELECT * FROM `areas` WHERE `id` = ".$id);
-						if(mysql_num_rows($q) == 1)
+
+
+						if($_GET['mode'] == 'restore')
 							{
 								if(mysql_query("UPDATE `areas` SET `deleted` = 0 WHERE `id` = ".$id))
 									{
@@ -196,16 +164,19 @@ if(isset($_GET['mode']))
 										fatalError(mysql_error());
 									}
 							}
-						else
-							{
-								fatalError('Участок не найден (wrong id)');
-							}
+							
+							if($_GET['action'] == 'doctors')
+								{
+									//
+								}
+				
 					}
 				else
 					{
-						fatalError('Участок не найден (empty id)');
+						fatalError('Участок не найден (wrong_id)');
 					}
 			}
+		fatalError('wrong_mode');
 	}
 
 setTitle('Участки');
@@ -243,7 +214,7 @@ else
 $q_deleted = mysql_query("SELECT * FROM `areas` WHERE `deleted` = 1 ORDER BY `title` ASC");
 if(mysql_num_rows($q_deleted) > 0)
 	{
-		echo '<h4>Удаленные участки</h4>';
+		echo '<hr /><br /><h4>Удаленные участки</h4>';
 		
 		while($area = mysql_fetch_assoc($q_deleted))
 			{
