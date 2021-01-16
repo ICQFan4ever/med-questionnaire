@@ -276,7 +276,7 @@ function passGen($length = 8)
 		$chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMOPQRSTUVWXYZ0123456789';
 		$len = mb_strlen($chars, 'utf-8');
 		$return = '';
-		for($i = 1; $i <= $len; $i++)
+		for($i = 1; $i <= $length; $i++)
 			{
 				$return .= $chars[mt_rand(0, $len - 1)];
 			}
