@@ -43,6 +43,7 @@ CREATE TABLE `questions`
 		`positive` tinytext,
 		`negative` tinytext,
 		`alert` TINYINT,
+		`priority` INT,
 		`draft` TINYINT
 	)
 Engine=Aria

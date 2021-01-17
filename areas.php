@@ -84,16 +84,14 @@ if(isset($_GET['mode']))
 					{
 						$_area = mysql_fetch_assoc($q);
 						if($_GET['mode'] == 'edit')
-							{
-								$area = mysql_fetch_assoc($q);
-								
+							{								
 								$error = array();
 								if(isset($_POST['button']))
 									{
 										if(isset($_POST['title']))
 											{
 												$db['title'] = dbFilter($_POST['title'], 200);
-												$q_check = mysql_query("SELECT * FROM `areas` WHERE `title` = '".$db['title']."' AND `id` != ".$area['id']);
+												$q_check = mysql_query("SELECT * FROM `areas` WHERE `title` = '".$db['title']."' AND `id` != ".$_area['id']);
 												if(mysql_num_rows($q_check) > 0)
 													{
 														$error[] = 'Такой участок уже есть';
@@ -106,13 +104,14 @@ if(isset($_GET['mode']))
 										
 										if(empty($error))
 											{
-												if(mysql_query("UPDATE `areas` SET `title` = '".$db['title']."' WHERE `id` = ".$area['id']))
+												$query = "UPDATE `areas` SET `title` = '".$db['title']."' WHERE `id` = ".$_area['id'];
+												if(mysql_query($query))
 													{
 														Redirect('/areas');
 													}
 												else
 													{
-														fatalError(mysql_error());
+														fatalError(mysql_error().'<br />'.$query);
 													}
 											}
 									}

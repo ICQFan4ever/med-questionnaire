@@ -47,14 +47,10 @@ if(isset($_GET['mode']))
 									{
 										$error[] = 'Неверный уровень доступа';
 									}
-								else
-									{
-										$error[] = 'Некорректный уровень доступа сотрудника';
-									}
 							}
 						else
 							{
-								$error[] = 'Некорректный уровень доступа сотрудника';
+								$error[] = 'Выберите уровень доступа сотрудника';
 							}
 						
 						if(isset($_POST['tg_id']))
@@ -133,7 +129,7 @@ if(isset($_GET['mode']))
 						</div>
 						
 						<div class="col-sm-4" style="margin-bottom: 5px;">
-							<select name="level">
+							<select name="level" class="form-control">
 								<option value="2">Мед. работник</option>
 								<option value="3">Руководитель участка</option>
 								<option value="4">Администратор</option>
@@ -141,7 +137,7 @@ if(isset($_GET['mode']))
 						</div>
 						
 						<div class="col-sm-4" style="margin-bottom: 5px;">
-							<select name="id_area">
+							<select name="id_area" class="form-control">
 								<option value="0">Вне участка (для администратора)</option>
 								<?php
 								$q_areas = mysql_query("SELECT * FROM `areas` WHERE `deleted` = 0");
@@ -161,7 +157,7 @@ if(isset($_GET['mode']))
 					</form>
 				</div>
 				
-				<a href="/doctors" class="btn btn-primary">Назад к списку мед. работников</a>
+				<br /><a href="/doctors" class="btn btn-primary">Назад к списку мед. работников</a>
 				
 				<?php
 				getFooter();
@@ -257,10 +253,6 @@ if(isset($_GET['mode']))
 													{
 														$error[] = 'Неверный уровень доступа';
 													}
-												else
-													{
-														$error[] = 'Некорректный уровень доступа сотрудника';
-													}
 											}
 										else
 											{
@@ -344,7 +336,7 @@ if(isset($_GET['mode']))
 										</div>
 										
 										<div class="col-sm-4" style="margin-bottom: 5px;">
-											<select name="level">
+											<select name="level" class="form-control">
 												<option value="2"<?=$_doctor['level'] == 2 ? ' selected="selected"' : ''?>>Мед. работник</option>
 												<option value="3"<?=$_doctor['level'] == 3 ? ' selected="selected"' : ''?>>Руководитель участка</option>
 												<option value="4"<?=$_doctor['level'] == 4 ? ' selected="selected"' : ''?>>Администратор</option>
@@ -352,7 +344,7 @@ if(isset($_GET['mode']))
 										</div>
 										
 										<div class="col-sm-4" style="margin-bottom: 5px;">
-											<select name="id_area">
+											<select name="id_area" class="form-control">
 												<option value="0">Вне участка (для администратора)</option>
 												<?php
 												$q_areas = mysql_query("SELECT * FROM `areas` WHERE `deleted` = 0");
@@ -372,7 +364,7 @@ if(isset($_GET['mode']))
 									</form>
 								</div>
 								
-								<a href="/doctors" class="btn btn-primary">Назад к списку мед. работников</a>
+								<br /><a href="/doctors" class="btn btn-primary">Назад к списку мед. работников</a>
 								
 								<?php
 								getFooter();
@@ -386,7 +378,7 @@ if(isset($_GET['mode']))
 										setTitle('??????');
 										getHeader();
 										?>
-										<img src="/desgin/noga.jpg" alt="" />
+										<img src="/design/noga.jpg" alt="" />
 										<?php
 										getFooter();
 										exit;
@@ -399,7 +391,7 @@ if(isset($_GET['mode']))
 											}
 										else
 											{
-												if(mysql_query("UPDATE `doctors` SET `deleted` = 1 WHERE `id` = ".$_doctor['id']))
+												if(mysql_query("UPDATE `doctors` SET `deleted` = 1, `session` = '' WHERE `id` = ".$_doctor['id']))
 													{
 														Redirect('/doctors');
 													}
@@ -468,6 +460,14 @@ if(isset($_GET['mode']))
 setTitle('Список мед. работников');
 getHeader();
 
+$q_areas = mysql_query("SELECT * FROM `areas` ORDER BY `id` ASC");
+
+$areas = array();
+while($inf = mysql_fetch_assoc($q_areas))
+	{
+		$_area[$inf['id']] = $inf['title'];
+	}
+echo '<a href="/doctors/add" class="btn btn-primary">Добавить работника</a><br />';
 $q = mysql_query("SELECT * FROM `doctors` WHERE `deleted` = 0");
 				
 if(mysql_num_rows($q) < 1)
@@ -483,8 +483,9 @@ else
 				?>
 				<div class="col">
 					<?=$cc?>) <a href="/doctors/view/<?=$doctor['id']?>"><?=$doctor['name']?></a><br />
+					<b><?=$doctor['id_area'] == 0 ? 'Без участка' : $_area[$doctor['id_area']]?></b><br />
 					<a href="/doctors/edit/<?=$doctor['id']?>" class="btn btn-xs btn-success">Редактировать</a> 
-					<a href="/doctors/remove/<?=$doctor['id']?>" class="btn btn-xs btn-primary">Удалить</a> 
+					<a href="/doctors/remove/<?=$doctor['id']?>" class="btn btn-xs btn-danger">Удалить</a> 
 					<hr />
 				</div>
 				<?php
