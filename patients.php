@@ -20,17 +20,17 @@ modes:
 		`deleted` TINYINT
 */
 
+// Сразу запросим все участки
+$q_areas = mysql_query("SELECT * FROM `areas` WHERE `deleted` = 0 ORDER BY `id` ASC");
+while($area = mysql_fetch_assoc($q_areas))
+	{
+		$_areas[$area['id']] = $area['title'];
+	}
 
 if(isset($_GET['mode']))
 	{
 		if($_GET['mode'] == 'add')
 			{
-				// Сразу запросим все участки
-				$q_areas = mysql_query("SELECT * FROM `areas` WHERE `deleted` = 0 ORDER BY `id` ASC");
-				while($area = mysql_fetch_assoc($q_areas))
-					{
-						$_areas[$area['id']] = $area['title'];
-					}
 				$error = array();
 				
 				if(isset($_POST['button']))
@@ -109,16 +109,18 @@ if(isset($_GET['mode']))
 						if($_INFO['level'] >= 4)
 							{
 								?>
-								<select name="id_area" class="form-control">
-								<?php
-									foreach($_areas as $id_area => $name)
-										{
-											?>
-											<option value="<?=$id_area?>"><?=$name?></option>
-											<?php
-										}
-								?>
-								</select>
+								<div class="col-sm-3" style="margin-bottom: 5px;">
+									<select name="id_area" class="form-control">
+									<?php
+										foreach($_areas as $id_area => $name)
+											{
+												?>
+												<option value="<?=$id_area?>"><?=$name?></option>
+												<?php
+											}
+									?>
+									</select>
+								</div>
 								<?php
 							}
 						?>
@@ -147,6 +149,35 @@ if(isset($_GET['mode']))
 						
 						if($_INFO['id_area'] == $_patient['id_area'] OR $_INFO['level'] >= 4)
 							{
+								if($_GET['mode'] == 'view')
+									{
+										setTitle($_patient['name']);
+										getHeader();
+										
+										?>
+										<dl class="row">
+											<dt class="col-sm-3">ФИО</dt>
+											<dd class="col-sm-9"><?=$_patient['name']?></dd>
+											
+											<dt class="col-sm-3">Телефон</dt>
+											<dd class="col-sm-9"><a href="tel:<?=$_patient['phone']?>"><?=$_patient['phone']?></a></dd>
+											
+											<dt class="col-sm-3">Участок</dt>
+											<dd class="col-sm-9"><?=$_areas[$_patient['id_area']]?></dd>
+											
+											<dt class="col-sm-3">Ссылка пациента</dt>
+											<dd class="col-sm-9"><pre>https://<?=$_SITE['domain']?>/pass/<?=$_patient['sid']?></pre></dd>
+											
+										</dl>
+										<br />
+										<a href="/patients/edit/<?=$_patient['id']?>" class="btn btn-sm btn-success">Редактировать</a> 
+										<a href="/patients/remove/<?=$_patient['id']?>" class="btn btn-sm btn-danger">Удалить</a><br /><br />
+										<a href="/patients" class="btn btn-sm btn-primary">Назад к списку пациентов</a>
+										<?php
+										getFooter();
+										exit;
+									}
+								
 								if($_GET['mode'] == 'edit')
 									{
 										$error = array();
@@ -229,7 +260,7 @@ if(isset($_GET['mode']))
 												
 												<div class="col-sm-3" style="margin-bottom: 5px;">
 													Телефон:<br />
-													<input type="text" class="form-control" name="phone" placeholder="Телефон" value="<?=$_patient['name']?>" />
+													<input type="text" class="form-control" name="phone" placeholder="Телефон" value="<?=$_patient['phone']?>" />
 												</div>
 												
 												<?php
@@ -314,7 +345,7 @@ if($_INFO['level'] >= 4)
 				if(mysql_num_rows($q_area) == 1)
 					{
 						$_area = mysql_fetch_assoc($q_area);
-						$title = 'Пациенты участка '.$area['title'];
+						$title = 'Пациенты участка '.$_area['title'];
 						$q_patients = mysql_query("SELECT * FROM `patients` WHERE `id_area` = ".$_area['id']." ORDER BY `name` ASC");
 					}
 				else
@@ -325,7 +356,7 @@ if($_INFO['level'] >= 4)
 		else
 			{
 				$title = 'Все пациенты';
-				$q_patients = mysql_query("SELECT * FROM `patients` WHERE `id_area` = ".$id_area." ORDER BY `name` ASC");
+				$q_patients = mysql_query("SELECT * FROM `patients` ORDER BY `name` ASC");
 			}
 	}
 else
@@ -346,36 +377,41 @@ else
 setTitle($title);
 getHeader();
 
-echo '<a href="/patients/add" class="btn btn-primary">Добавить пациента</a><br />';
+echo '<a href="/patients/add" class="btn btn-primary">Добавить пациента</a><br /><br />';
 
 if($_INFO['level'] >= 4)
 	{
 		?>
-		<form action="">
-			<select name="change" onchange="location = this.value;" class="form-control">
-				<?php
-				$q_areas = mysql_query("SELECT * FROM `areas` ORDER BY `id` ASC");
-				while($tmp = mysql_fetch_assoc($q_areas))
-					{
-						$_areas[$tmp['id']] = $tmp['title'];
-					}
-				
-				foreach($_areas as $key => $value)
-					{
-						?>
-						<option value="/patients/<?=$key?>"><?=$value?></option>
+		<div class="row">
+			<form action="">
+				<div class="col-sm-3" style="margin-bottom: 5px;">
+					<select name="change" onchange="location = this.value;" class="form-control">
+						<option value="/patients">Все участки</option>
 						<?php
-					}
-				?>
-			</select>
-		</form>
+						$q_areas = mysql_query("SELECT * FROM `areas` ORDER BY `id` ASC");
+						while($tmp = mysql_fetch_assoc($q_areas))
+							{
+								$_areas[$tmp['id']] = $tmp['title'];
+							}
+						
+						foreach($_areas as $key => $value)
+							{
+								?>
+								<option value="/patients/<?=$key?>"<?=isset($_GET['id_area']) && @$id_area == $key ? ' selected="selected"' : ''?>><?=$value?></option>
+								<?php
+							}
+						?>
+					</select>
+				</div>
+			</form>
+		</div>
 		<?php
 	}
 // Начинаем вывод пациентов
 
 if(mysql_num_rows($q_patients) < 1)
 	{
-		showError('Нет пациентов для отображения');
+		showError('На участке &quot;'.$_area['title'].'&quot; нет пациентов');
 	}
 else
 	{
@@ -386,9 +422,12 @@ else
 				?>
 				
 				<div class="col">
-					<?=$cc?>) <a href="/patients/view/<?=$patient['id']?>"><?=$patient['name']?></a><br />
-					Телефон: <a href="tel:<?=$patient['phone']?>"><?=$patient['name']?></a><br />
-					// todo: проходила ли опрос сегодня
+					<?=$cc?>) <a href="/patients/view/<?=$patient['id']?>" style="font-weight: bold;"><?=$patient['name']?></a><br />
+					Телефон: <a href="tel:<?=$patient['phone']?>"><?=$patient['phone']?></a><br />
+					<?=$_INFO['level'] >= 4 ? '<b>'.$_areas[$patient['id_area']].'</b><br />' : ''?>
+					// todo: проходила ли опрос сегодня<br />
+					<a href="/patients/edit/<?=$patient['id']?>" class="btn btn-xs btn-success">Редактировать</a> 
+					<a href="/patients/remove/<?=$patient['id']?>" class="btn btn-xs btn-danger">Удалить</a>
 					<hr />
 				</div>
 				<?php
