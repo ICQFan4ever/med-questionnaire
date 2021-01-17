@@ -250,6 +250,11 @@ function showSuccess($text = '')
 		echo '<br /><div class="alert alert-success" role="alert">'.$text.'</div><br />';
 	}
 
+function showWarning($text = '')
+	{
+		echo '<br /><div class="alert alert-warning" role="alert">'.$text.'</div><br />';
+	}
+
 function showFormError($array)
 	{
 		if(empty($array))

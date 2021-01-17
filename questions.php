@@ -272,6 +272,7 @@ if(isset($_GET['mode']))
 								setTitle('Редактирование вопроса');
 								getHeader();
 								showFormError($error);
+								showWarning('Внимание! Редактирование вопросов и вариантов ответа повлияет на предыдущие отчеты о пациентах, т.е. при даже выгрузке старого отчета вы увидите новый текст вопроса и варианты ответа');
 								?>
 								<div class="row">
 									<form action="/questions/edit/<?=$_question['id']?>" method="post">
