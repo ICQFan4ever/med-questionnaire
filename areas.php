@@ -14,7 +14,7 @@ mode:
 	doctors +/id
 	patients +/id
 */
-
+//
 if(isset($_GET['mode']))
 	{
 		if($_GET['mode'] == 'add')
