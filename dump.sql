@@ -49,6 +49,16 @@ CREATE TABLE `questions`
 Engine=Aria
 DEFAULT CHARSET=utf8mb4;
 
+CREATE TABLE `reports`
+	(
+		`id` INT AUTO_INCREMENT PRIMARY KEY,
+		`id_patient` INT,
+		`date` TINYTEXT,
+		`time` INT
+	)
+Engine=Aria
+DEFAULT CHARSET=utf8mb4;
+
 CREATE TABLE `questions_answers`
 	(
 		`id` INT AUTO_INCREMENT PRIMARY KEY,

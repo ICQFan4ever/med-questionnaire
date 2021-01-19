@@ -171,7 +171,8 @@ if(isset($_GET['mode']))
 										</dl>
 										<br />
 										<a href="/patients/edit/<?=$_patient['id']?>" class="btn btn-sm btn-success">Редактировать</a> 
-										<a href="/patients/remove/<?=$_patient['id']?>" class="btn btn-sm btn-danger">Удалить</a><br /><br />
+										<?=$_patient['deleted'] == 0 ? '<a href="/patients/remove/'.$_patient['id'].'" class="btn btn-sm btn-danger">Удалить</a>' : '<a href="/patients/restore/'.$_patient['id'].'" class="btn btn-sm btn-primary">Восстановить</a>'?>
+										<br /><br />
 										<a href="/patients" class="btn btn-sm btn-primary">Назад к списку пациентов</a>
 										<?php
 										getFooter();
@@ -331,6 +332,109 @@ if(isset($_GET['mode']))
 						fatalError('Пациент не найден (db)');
 					}
 			}
+		
+		if($_GET['mode'] == 'removed')
+			{
+				if($_INFO['level'] >= 4)
+					{
+						if(isset($_GET['id_area']))
+							{
+								$id_area = (int)$_GET['id_area'];
+								$q_area = mysql_query("SELECT * FROM `areas` WHERE `id` = ".$id_area);
+								if(mysql_num_rows($q_area) == 1)
+									{
+										$_area = mysql_fetch_assoc($q_area);
+										$title = 'Удаленные пациенты участка '.$_area['title'];
+										$q_patients = mysql_query("SELECT * FROM `patients` WHERE `id_area` = ".$_area['id']." AND `deleted` = 1 ORDER BY `name` ASC");
+									}
+								else
+									{
+										fatalError('Такого участка нет');
+									}
+							}
+						else
+							{
+								$title = 'Все удаленные пациенты';
+								$_area['title'] = 'Все участки';
+								$q_patients = mysql_query("SELECT * FROM `patients` WHERE `deleted` = 1 ORDER BY `name` ASC");
+							}
+					}
+				else
+					{
+						$q_area = mysql_query("SELECT * FROM `areas` WHERE `id` = ".$_INFO['id_area']);
+						if(mysql_num_rows($q_area) == 1)
+							{
+								$_area = mysql_fetch_assoc($q_area);
+								$title = 'Удаленные пациенты вашего участка';
+								$q_patients = mysql_query("SELECT * FROM `patients` WHERE `id_area` = ".$_area['id']." AND `deleted` = 1 ORDER BY `name` ASC");
+							}
+						else
+							{
+								fatalError('Системная ошибка. Ваш участок не существует. Обратитесь к администратору');
+							}
+					}
+				setTitle($title);
+				getHeader();
+				echo '<a href="/patients" class="btn btn-sm btn-primary">Назад к списку пациентов</a><br /><br />';
+				if($_INFO['level'] >= 4)
+					{
+						?>
+						<div class="row">
+							<form action="">
+								<div class="col-sm-3" style="margin-bottom: 5px;">
+									<select name="change" onchange="location = this.value;" class="form-control">
+										<option value="/patients">Все участки</option>
+										<?php
+										$q_areas = mysql_query("SELECT * FROM `areas` ORDER BY `id` ASC");
+										while($tmp = mysql_fetch_assoc($q_areas))
+											{
+												$_areas[$tmp['id']] = $tmp['title'];
+											}
+										
+										foreach($_areas as $key => $value)
+											{
+												?>
+												<option value="/patients/removed/area/<?=$key?>"<?=isset($_GET['id_area']) && @$id_area == $key ? ' selected="selected"' : ''?>><?=$value?></option>
+												<?php
+											}
+										?>
+									</select>
+								</div>
+							</form>
+						</div>
+						<?php
+					}
+				// Начинаем вывод пациентов
+
+				if(mysql_num_rows($q_patients) < 1)
+					{
+						showError('На участке &quot;'.$_area['title'].'&quot; нет удаленных пациентов');
+					}
+				else
+					{
+						$cc = 0;
+						while($patient = mysql_fetch_assoc($q_patients))
+							{
+								$cc++;
+								?>
+								
+								<div class="col">
+									<?=$cc?>) <a href="/patients/view/<?=$patient['id']?>" style="font-weight: bold;"><?=$patient['name']?></a><br />
+									Телефон: <a href="tel:<?=$patient['phone']?>"><?=$patient['phone']?></a><br />
+									<?=$_INFO['level'] >= 4 ? '<b>'.$_areas[$patient['id_area']].'</b><br />' : ''?>
+									// todo: проходила ли опрос сегодня<br />
+									<a href="/patients/edit/<?=$patient['id']?>" class="btn btn-xs btn-success">Редактировать</a> 
+									<a href="/patients/restore/<?=$patient['id']?>" class="btn btn-xs btn-primary">Восстановить</a>
+									<hr />
+								</div>
+								<?php
+							}
+					}
+
+				getFooter();
+				exit;
+			}
+		
 		fatalError('wrong mode');
 	}
 
@@ -346,7 +450,7 @@ if($_INFO['level'] >= 4)
 					{
 						$_area = mysql_fetch_assoc($q_area);
 						$title = 'Пациенты участка '.$_area['title'];
-						$q_patients = mysql_query("SELECT * FROM `patients` WHERE `id_area` = ".$_area['id']." ORDER BY `name` ASC");
+						$q_patients = mysql_query("SELECT * FROM `patients` WHERE `id_area` = ".$_area['id']." AND `deleted` = 0 ORDER BY `name` ASC");
 					}
 				else
 					{
@@ -356,7 +460,8 @@ if($_INFO['level'] >= 4)
 		else
 			{
 				$title = 'Все пациенты';
-				$q_patients = mysql_query("SELECT * FROM `patients` ORDER BY `name` ASC");
+				$_area['title'] = 'Все пациенты';
+				$q_patients = mysql_query("SELECT * FROM `patients` WHERE `deleted` = 0 ORDER BY `name` ASC");
 			}
 	}
 else
@@ -366,7 +471,7 @@ else
 			{
 				$_area = mysql_fetch_assoc($q_area);
 				$title = 'Пациенты вашего участка';
-				$q_patients = mysql_query("SELECT * FROM `patients` WHERE `id_area` = ".$_area['id']." ORDER BY `name` ASC");
+				$q_patients = mysql_query("SELECT * FROM `patients` WHERE `id_area` = ".$_area['id']." AND `deleted` = 0 ORDER BY `name` ASC");
 			}
 		else
 			{
@@ -433,5 +538,6 @@ else
 				<?php
 			}
 	}
+echo '<br /><a href="/patients/removed" class="btn btn-sm btn-secondary">Удаленные пациенты</a><br />';
 
 getFooter();
