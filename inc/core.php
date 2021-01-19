@@ -28,17 +28,18 @@ class tg
 				curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($args));
 				curl_setopt($ch, CURLOPT_HTTPHEADER, array("Content-Type: application/json"));
 				$a = curl_exec($ch);
+				var_dump($a);
 			}
 		
 		public function send($id_chat, $text, $parse_mode = '', $id_message = '')
 			{
 				$toSend = array();
-				$toSend['id_chat'] = $id_chat;
+				$toSend['chat_id'] = $id_chat;
 				$toSend['parse_mode'] = empty($parse_mode) ? 'HTML' : 'Markdown';
 				$toSend['reply_to_id_message'] = empty($id_message) ? '' : $id_message;
 				$toSend['text'] = $text;
 				
-				$send = $this -> request('sendMessage', $toSend);
+				return $send = $this -> request('sendMessage', $toSend);
 			}
 	}
 

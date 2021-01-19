@@ -40,6 +40,11 @@ if(isset($_GET['sid']))
 												$answer = (int)$_POST['question_'.$question['id']];
 												if($answer == 1 OR $answer == 2)
 													{
+														// чекаем, проверяем alert
+														if($answer == $question['alert'])
+															{
+																$alert = true;
+															}
 														// готовим query
 														/*
 																`id` INT AUTO_INCREMENT PRIMARY KEY,
@@ -82,6 +87,12 @@ if(isset($_GET['sid']))
 														getHeader();
 														showSuccess('Ответы на вопросы сохранены. Спасибо');
 														////////////// ALERT!!!!
+														if($alert)
+															{
+																$message = 'Внимание, при прохождении теста выбран alert-ответ!'.PHP_EOL.' ФИО пациента: '.$_PATIENT['name'].', телефон: '.$_PATIENT['phone'].', ссылка на отчет: https://'.$_SITE['domain'].'/reports/view/'.$__id_report;
+																$tg = new Tg($_TG['api']);
+																$tg -> send(41851891, $message);
+															}
 														getFooter();
 														exit;
 													}

@@ -2,6 +2,7 @@ CREATE TABLE `areas`
 	(
 		`id` INT AUTO_INCREMENT PRIMARY KEY,
 		`title` TINYTEXT,
+		`tg_id` TINYTEXT,
 		`deleted` TINYINT
 	)
 Engine=Aria

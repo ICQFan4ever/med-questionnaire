@@ -37,9 +37,18 @@ if(isset($_GET['mode']))
 								$error[] = 'Укажите название участка';
 							}
 						
+						if(isset($_POST['tg_id']))
+							{
+								$db['tg_id'] = dbFilter($_POST['tg_id'], 100);
+							}
+						else
+							{
+								$error[] = 'Укажите Telegram ID чата участка';
+							}
+						
 						if(empty($error))
 							{
-								if(mysql_query("INSERT INTO `areas`(`title`, `deleted`) VALUES ('".$db['title']."', 0)"))
+								if(mysql_query("INSERT INTO `areas`(`title`, `tg_id`, `deleted`) VALUES ('".$db['title']."', '".$db['tg_id']."', 0)"))
 									{
 										Redirect('/areas');
 									}
@@ -61,6 +70,10 @@ if(isset($_GET['mode']))
 
 						<div class="col-sm-6" style="margin-bottom: 5px;">
 							<input type="text" class="form-control" name="title" placeholder="Название участка" />
+						</div>
+						
+						<div class="col-sm-6" style="margin-bottom: 5px;">
+							<input type="text" class="form-control" name="tg_id" placeholder="Telegram ID" />
 						</div>
 
 						<div class="col-sm-6">
@@ -102,9 +115,18 @@ if(isset($_GET['mode']))
 												$error[] = 'Укажите название участка';
 											}
 										
+										if(isset($_POST['tg_id']))
+											{
+												$db['tg_id'] = dbFilter($_POST['tg_id'], 100);
+											}
+										else
+											{
+												$error[] = 'Укажите Telegram ID чата участка';
+											}
+										
 										if(empty($error))
 											{
-												$query = "UPDATE `areas` SET `title` = '".$db['title']."' WHERE `id` = ".$_area['id'];
+												$query = "UPDATE `areas` SET `title` = '".$db['title']."', `tg_id` = '".$db['tg_id']."' WHERE `id` = ".$_area['id'];
 												if(mysql_query($query))
 													{
 														Redirect('/areas');
@@ -126,6 +148,10 @@ if(isset($_GET['mode']))
 
 										<div class="col-sm-6" style="margin-bottom: 5px;">
 											<input type="text" class="form-control" name="title" placeholder="Название участка" value="<?=$_area['title']?>" />
+										</div>
+										
+										<div class="col-sm-6" style="margin-bottom: 5px;">
+											<input type="text" class="form-control" name="tg_id" placeholder="Telegram ID" value="<?=$_area['tg_id']?>" />
 										</div>
 
 										<div class="col-sm-6">
