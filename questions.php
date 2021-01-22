@@ -113,7 +113,7 @@ if(isset($_GET['mode']))
 				setTitle('Добавить вопрос');
 				getHeader();
 				showFormError($error);
-				$q_max = mysql_query("SELECT MAX(`id`) AS max FROM `questions`");
+				$q_max = mysql_query("SELECT MAX(`priority`) AS max FROM `questions`");
 				if(mysql_num_rows($q_max) == 1)
 					{
 						$_tmp = mysql_fetch_assoc($q_max);

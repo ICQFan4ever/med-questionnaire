@@ -69,11 +69,11 @@ if(isset($_GET['mode']))
 					<form action="/areas/add" method="post">
 
 						<div class="col-sm-6" style="margin-bottom: 5px;">
-							<input type="text" class="form-control" name="title" placeholder="Название участка" />
+							<input type="text" class="form-control" name="title" required="required" placeholder="Название участка" />
 						</div>
 						
 						<div class="col-sm-6" style="margin-bottom: 5px;">
-							<input type="text" class="form-control" name="tg_id" placeholder="Telegram ID" />
+							<input type="text" class="form-control" name="tg_id" required="required" placeholder="Telegram ID" />
 						</div>
 
 						<div class="col-sm-6">
@@ -147,11 +147,11 @@ if(isset($_GET['mode']))
 									<form action="/areas/edit/<?=$_area['id']?>" method="post">
 
 										<div class="col-sm-6" style="margin-bottom: 5px;">
-											<input type="text" class="form-control" name="title" placeholder="Название участка" value="<?=$_area['title']?>" />
+											<input type="text" class="form-control" name="title" required="required" placeholder="Название участка" value="<?=$_area['title']?>" />
 										</div>
 										
 										<div class="col-sm-6" style="margin-bottom: 5px;">
-											<input type="text" class="form-control" name="tg_id" placeholder="Telegram ID" value="<?=$_area['tg_id']?>" />
+											<input type="text" class="form-control" name="tg_id" required="required" placeholder="Telegram ID" value="<?=$_area['tg_id']?>" />
 										</div>
 
 										<div class="col-sm-6">

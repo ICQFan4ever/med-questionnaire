@@ -2,9 +2,16 @@
 
 require_once 'inc/core.php';
 
-setTitle('Алло');
+setTitle('Inform');
 getHeader();
 
-echo 'Пика-пика';
+if(isAut())
+	{
+		Redirect('/lk?frIndex');
+	}
+else
+	{
+		showInfo('Воспользуйтесь персональной ссылкой или выполните вход (для мед. работников)');
+	}
 
 getFooter();
