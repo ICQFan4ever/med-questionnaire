@@ -6,6 +6,7 @@ require_once 'settings.php';
 mysql_select_db($_DB['db']) or die(mysql_error());
 mysql_set_charset($_DB['charset']);
 
+date_default_timezone_set('Asia/Almaty');
 
 class tg
 	{
@@ -28,18 +29,18 @@ class tg
 				curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($args));
 				curl_setopt($ch, CURLOPT_HTTPHEADER, array("Content-Type: application/json"));
 				$a = curl_exec($ch);
-				var_dump($a);
+				//var_dump($a);
 			}
 		
 		public function send($id_chat, $text, $parse_mode = '', $id_message = '')
 			{
 				$toSend = array();
 				$toSend['chat_id'] = $id_chat;
-				$toSend['parse_mode'] = empty($parse_mode) ? 'HTML' : 'Markdown';
+				$toSend['parse_mode'] = empty($parse_mode) ? 'HTML' : $parse_mode;
 				$toSend['reply_to_id_message'] = empty($id_message) ? '' : $id_message;
 				$toSend['text'] = $text;
 				
-				return $send = $this -> request('sendMessage', $toSend);
+				$this -> request('sendMessage', $toSend);
 			}
 	}
 
@@ -95,10 +96,6 @@ function getHeader()
 				border-radius: .2rem;
 			}
 		</style>
-
-
-		<!-- Custom styles for this template -->
-		<link href="sticky-footer-navbar.css" rel="stylesheet">
 	</head>
 	<body class="d-flex flex-column h-100">
 
@@ -195,6 +192,10 @@ if(isset($_COOKIE['session']))
 						$aut = true;
 						$_INFO = mysql_fetch_assoc($q);
 						define('LEVEL', $_INFO['level']);
+						// обновляем кукис
+						setcookie('session', $_INFO['session'], time() + 86400 * 3, '/', $_SITE['domain']);
+						// обновляем last_seen
+						mysql_query("UPDATE `doctors` SET `last_seen` = ".time()." WHERE `id` = ".$_INFO['id']);
 					}
 				else
 					{
@@ -254,6 +255,11 @@ function showSuccess($text = '')
 function showWarning($text = '')
 	{
 		echo '<br /><div class="alert alert-warning" role="alert">'.$text.'</div><br />';
+	}
+
+function showInfo($text = '')
+	{
+		echo '<br /><div class="alert alert-primary" role="alert">'.$text.'</div><br />';
 	}
 
 function showFormError($array)
